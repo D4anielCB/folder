@@ -3,8 +3,7 @@
     <buffermode>1</buffermode>
     <memorysize>333460608</memorysize>
     <readfactor>40</readfactor>
-
   </cache>
-	<imageres>720</imageres>
-	<fanartres>720</fanartres>
+	<imageres>550</imageres>
+	<fanartres>550</fanartres>
 </advancedsettings>
