@@ -1,4 +1,7 @@
 <advancedsettings>
+  <video>
+    <ignoresecondsatstart>180</ignoresecondsatstart>
+  </video>
   <cache>
     <buffermode>2</buffermode>
     <memorysize>104857600</memorysize>
