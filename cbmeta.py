@@ -1,21 +1,25 @@
-def ListImdb(): #352
-	AddDir("Reload" , "", 40, isFolder=False)
-	file = OpenURL("http://cbplay.000webhostapp.com/imdb/imdb.txt")
-	chList = json.loads(file)
-	#chList = common.ReadList(file)
-	#chList = sorted(chList, key=lambda k: k['nome'], reverse=False)
-	i = 0
-	#ST(chList)
-	for channel in reversed(chList):
-		if i == 3: break
-		try:
-			mm = mg.get_tmdb_details(tmdb_id=channel["id"], title="", year="", media_type="movies", manual_select=False, ignore_cache=False)
-			mm['tagline'] = mm['genre']
-			#ST(mm)
-			#AddDir(mm['title'] + " / " + channel["name"].encode("utf-8"), channel["url"].encode("utf-8"), 96, "", "", isFolder=False, IsPlayable=True, background=channel["name"].encode("utf-8"), metah=mm, DL="["+str(mm['rating'])+"]", index = i)
-			#AddDir(channel["nome"] + " (" + channel["ano"]+")", channel["url"].encode("utf-8"), 96, "", "", isFolder=False, IsPlayable=True, background=channel["name"].encode("utf-8"), metah=mm, DL="["+str(mm['rating'])+"]", index = i)
-			#mm['title'] = unquote(mm['title'])
-			AddDir(mm['title'] + " (" + str(channel["ano"])+")", channel["url"], 96, "", "", isFolder=False, IsPlayable=True, background=channel["name"], metah=mm, index = i)
-		except:
-			pass
-		i += 1
+def ListSeason(url,background): #532
+	lista = CRsession("https://api.crunchyroll.com/list_collections.0.json?series_id="+url,crsession)
+	#ST(lista)
+	mmm = mg.get_tvshow_details(title="",tmdb_id=background, ignore_cache=MUcache, lang=MUlang)
+	collection = []
+	reseason = str(lista['data'])
+	for l in lista['data']:
+		#if not "'season': '1'" in str(lista['data']) and "'season': '0'" in reseason and not "Dub" in l['name']:
+		if not "'season': '1'" in str(lista['data']) and "'season': '0'" in reseason and not "Dub" in l['name']:
+			collection.append({"1" : l['collection_id'] })
+			#collection.append( { collection[1] : l['collection_id'] } )
+		elif not "Dub" in l['name']:
+			collection.append({l['season'] : l['collection_id'] })
+			#collection[l['season']] = l['collection_id']
+	#ST(collection)
+	for s in collection:
+		for season in s:
+			metasea=mergedicts(mmm[-1],mmm[int(season)])
+			AddDir2(s[season], url, 533, "", "", info=s[season], isFolder=True, background=season, metah=metasea)
+	AddDir("---------- Autoplay ----------" , "", 40, isFolder=False)
+	for s in collection:
+		for season in s:
+			metasea=mergedicts(mmm[-1],mmm[int(season)])
+			metasea['mediatype'] = "episode"
+			AddDir2(metasea['name'], url, 535, "", "", info=s[season], isFolder=False, IsPlayable=True, background=season, metah=metasea)
